@@ -28,6 +28,18 @@ plain `.js` files rather than JSON fetched over HTTP.
 
 Optional: a different port (`python3 -m http.server 8080`), or `npx serve .`.
 
+## Deploy to Render
+
+This project is a static site and needs no environment variables or dependency installation.
+The repository includes a `render.yaml` Blueprint that publishes the project root.
+
+1. Push the repository to GitHub.
+2. In Render, choose **New → Blueprint** and connect this repository.
+3. Review the `trendoscope` static site and deploy it. Render will use the default branch
+   containing `render.yaml`; future pushes to that branch deploy automatically.
+
+The site uses regular `.html` page URLs, so no single-page-app rewrite rule is needed.
+
 ### Dependencies
 
 None to install. The site ships its own copies of:

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Data & Method — Trendoscope</title>
+<meta name="description" content="Where the data comes from, how the trend statistics work, the limitations, and the AI-use disclosure." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23061A33'/%3E%3Ccircle cx='14.5' cy='14.5' r='6' fill='none' stroke='%238CC63F' stroke-width='2.4'/%3E%3Cline x1='19' y1='19' x2='24' y2='24' stroke='%238CC63F' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-method">
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html" aria-label="Trendoscope — home">
+      <img class="brand-logo" src="assets/logo.png" width="428" height="200" alt="Trendoscope" />
+    </a>
+    <span class="nav-divider" aria-hidden="true"></span>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.6 12 4l8 6.6"/><path d="M6.4 9.4V19h11.2V9.4"/></svg><span>Home</span></a>
+      <a href="investigate.html"><span>Investigate</span></a>
+      <a href="compare.html"><span>Compare</span></a>
+      <a href="detective-game.html"><span>Detective game</span></a>
+      <a href="data-method.html" class="is-active" aria-current="page"><span>Data &amp; Method</span></a>
+    </nav>
+    <a class="nav-cta" href="investigate.html">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle><path d="M15.4 8.6 13.6 13.6 8.6 15.4 10.4 10.4Z"></path>
+      </svg>
+      <span>Get started</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+<section class="page-head">
+  <div class="container">
+    <p class="eyebrow">No black boxes</p>
+    <h1 class="page-title">Data &amp; Method</h1>
+    <p class="page-lede">
+      Everything on this site comes from one public NASA service, is cached as plain JSON, and is processed
+      with two standard statistical tests. This page shows the whole chain: where the numbers come from, how a
+      verdict is reached, what the numbers cannot tell you, and how AI was used.
+    </p>
+  </div>
+</section>
+
+<!-- ============================== PIPELINE ============================== -->
+<section class="section--tight">
+  <div class="container">
+    <div class="glass-card pipeline">
+      <p class="eyebrow">The chain of evidence</p>
+      <ol class="pipeline-steps">
+        <li><span class="pipe-num mono">01</span><strong>NASA POWER API</strong><span>MERRA-2 reanalysis · 8 variables · 6 region boxes</span></li>
+        <li><span class="pipe-num mono">02</span><strong>Python cache</strong><span>Monthly series 1993–2024, daily 2015–2024, written to JSON</span></li>
+        <li><span class="pipe-num mono">03</span><strong>Browser statistics</strong><span>Deseasonalise → Theil–Sen slope → Mann–Kendall → verdict</span></li>
+        <li><span class="pipe-num mono">04</span><strong>Plain-language case</strong><span>Chart, stamp, six stat cards, plain-language insight</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== SOURCES =============================== -->
+<section class="section--tight" id="sources">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Sources</p>
+      <h2 class="section-title">Where the data comes from</h2>
+    </header>
+
+    <div class="table-wrap glass-card">
+      <table class="data-table">
+        <thead>
+          <tr><th>Layer</th><th>What it provides</th><th>Used here for</th><th>Link</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>NASA POWER</strong></td>
+            <td>The public API that serves MERRA-2 and satellite-corrected fields as point and regional time series.</td>
+            <td>Every series on this site.</td>
+            <td><a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">power.larc.nasa.gov</a></td>
+          </tr>
+          <tr>
+            <td><strong>MERRA-2</strong></td>
+            <td>Modern-Era Retrospective analysis for Research and Applications, Version 2 (NASA GMAO). A global reanalysis that assimilates satellite and surface observations.</td>
+            <td>Temperature, wind, humidity, soil wetness, radiation, evapotranspiration.</td>
+            <td><a href="https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/" target="_blank" rel="noopener">gmao.gsfc.nasa.gov</a></td>
+          </tr>
+          <tr>
+            <td><strong>GPM / GPCP</strong></td>
+            <td>Global Precipitation Measurement mission and the Global Precipitation Climatology Project.</td>
+            <td>Bias correction applied to the precipitation field (<code>PRECTOTCORR</code>) before it reaches POWER.</td>
+            <td><a href="https://gpm.nasa.gov/" target="_blank" rel="noopener">gpm.nasa.gov</a></td>
+          </tr>
+          <tr>
+            <td><strong>MERRA-2 Land</strong></td>
+            <td>Catchment land-surface model outputs for the soil column.</td>
+            <td>Root-zone (<code>GWETROOT</code>) and surface (<code>GWETTOP</code>) soil wetness.</td>
+            <td><a href="https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/" target="_blank" rel="noopener">gmao.gsfc.nasa.gov</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="source-note">
+      Citation for the data service: NASA Langley Research Center, <em>Prediction Of Worldwide Energy Resources
+      (POWER) Project</em>, 2024, <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">power.larc.nasa.gov</a>.
+      Access date is recorded in <code>data-core.js</code> as <code>generated</code>.
+    </p>
+  </div>
+</section>
+
+<!-- =============================== METHOD =============================== -->
+<section class="section--tight">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Method</p>
+      <h2 class="section-title">How a verdict is reached</h2>
+    </header>
+
+    <div class="method-grid">
+      <article class="glass-card method-card">
+        <p class="method-num mono">01 · m × 12</p>
+        <h3>Remove the seasonal cycle</h3>
+        <p>Every value has its own long-term average for that calendar month subtracted. What is left is the
+          <em>anomaly</em>: how unusual that month was for its time of year. This is why a wet January is not
+          counted as evidence of a wet climate.</p>
+      </article>
+
+      <article class="glass-card method-card">
+        <p class="method-num mono">02 · Theil–Sen</p>
+        <h3>Estimate the rate of change</h3>
+        <p>Take the slope of every possible pair of points in the record and use the median. Unlike a normal
+          line fit, one broken sensor or one huge storm cannot drag the answer. The 95% interval is the band
+          drawn around the trend line.</p>
+      </article>
+
+      <article class="glass-card method-card">
+        <p class="method-num mono">03 · Mann–Kendall</p>
+        <h3>Test whether the trend is real</h3>
+        <p>A rank test that does not assume the data are normally distributed. It counts how often later values
+          exceed earlier ones and turns that count into <em>S</em>, Kendall's tau and a p-value.</p>
+      </article>
+
+      <article class="glass-card method-card">
+        <p class="method-num mono">04 · p &lt; 0.05</p>
+        <h3>Make the call</h3>
+        <p>If the p-value is below 0.05 we report a significant increase or decrease. If not, the verdict is
+          <strong>no significant trend</strong> — never "no trend", because a shorter or noisier record simply
+          does not carry enough evidence yet.</p>
+      </article>
+    </div>
+
+    <div class="formula-card glass-card">
+      <div>
+        <p class="mono dim">Rate shown on screen</p>
+        <p class="formula">per&nbsp;decade = slope × 12 × 10 <span class="formula-note">(monthly)</span> &nbsp;·&nbsp; slope × 365.25 × 10 <span class="formula-note">(daily)</span></p>
+      </div>
+      <div>
+        <p class="mono dim">Percent change</p>
+        <p class="formula">mean(last 3 years) − mean(first 3 years) ÷ |mean(first 3 years)|</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== VALIDATION ============================== -->
+<section class="section--tight">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Validation</p>
+      <h2 class="section-title">Can you trust it? Test it yourself</h2>
+      <p class="section-lede">
+        The statistics engine runs in your browser, so it can be tested in your browser. These three checks take
+        about a second and use synthetic series with known answers.
+      </p>
+    </header>
+
+    <div class="glass-card selftest">
+      <div class="selftest-head">
+        <div>
+          <h3>Method self-test</h3>
+          <p class="dim">A perfect linear ramp, pure noise, and a shuffled copy of a real series.</p>
+        </div>
+        <button class="btn btn-primary" type="button" id="run-selftest">Run the self-test</button>
+      </div>
+      <ul class="selftest-list" id="selftest-list">
+        <li class="selftest-item" data-state="idle"><span class="st-dot"></span><span class="st-text">Not run yet.</span></li>
+      </ul>
+    </div>
+
+    <div class="glass-card repro">
+      <h3>Reproduction check against the published record</h3>
+      <p>
+        Our cache reproduces well-known features of the observed record rather than inventing them. Two examples
+        from the six regions, both visible in <a href="investigate.html">Investigate</a>:
+      </p>
+      <ul class="repro-list">
+        <li><strong>Sahel rainfall recovery.</strong> Precipitation over the western Sahel rises by roughly
+          0.2 mm/day per decade in this record, consistent with the documented post-1980s recovery after the
+          great droughts.</li>
+        <li><strong>Nile Delta warming.</strong> Air temperature rises by about 0.3 °C per decade, above the
+          global land average for the same period — the regional amplification expected over a desert-adjacent
+          basin.</li>
+        <li><strong>Amazon drying signal.</strong> Precipitation and evapotranspiration both decline, which is
+          the direction reported in the literature on Amazon forest–atmosphere coupling.</li>
+      </ul>
+      <p class="repro-note">
+        These are consistency checks, not independent validation: a reanalysis is a model constrained by
+        observations, so agreement with published estimates partly reflects shared input data.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= LIMITATIONS ============================= -->
+<section class="section--tight">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Honest limits</p>
+      <h2 class="section-title">What this tool cannot do</h2>
+    </header>
+    <div class="limits-grid">
+      <div class="glass-card limit"><h3>Linear only</h3><p>A single straight trend cannot describe a step change, a tipping point or a cycle that turns around. We report one slope because it is the honest baseline, not because the world is linear.</p></div>
+      <div class="glass-card limit"><h3>Correlation is not cause</h3><p>The case files and the Compare page always say <em>associated with</em>. Two series can share a driver, or one can lead the other, and this app cannot tell those apart.</p></div>
+      <div class="glass-card limit"><h3>Reanalysis, not a rain gauge</h3><p>MERRA-2 is a model fed by observations. In data-sparse regions it is closer to an informed estimate than to a measurement, and soil moisture in particular is modelled, not sensed directly.</p></div>
+      <div class="glass-card limit"><h3>Six boxes, eight variables</h3><p>This is a curated cache, not the whole Earth. A region box hides strong local gradients — a delta is not uniform, and an average over it is a simplification.</p></div>
+      <div class="glass-card limit"><h3>Serial correlation</h3><p>Monthly series are autocorrelated, which can make the Mann–Kendall test slightly too optimistic. We show tau and the CI so the strength of the evidence stays visible.</p></div>
+      <div class="glass-card limit"><h3>Missing values are reported</h3><p>Gaps are counted, never filled. Above 20% missing, the case itself tells you to be careful.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ AI DISCLOSURE ============================ -->
+<section class="section--tight" id="ai-use">
+  <div class="container">
+    <div class="paper disclosure">
+      <p class="eyebrow" style="color:#8A6A2A">AI-use disclosure</p>
+      <h2 class="disclosure-title">How AI was used in this project</h2>
+      <div class="disclosure-grid">
+        <div>
+          <h3>Code</h3>
+          <p>AI assistance was used to write and review the front-end code (HTML, CSS, JavaScript), the Python
+            data-fetch and cache script, and the statistical routines. The team reviewed the logic and tested
+            the outputs against synthetic series with known answers (see the self-test above).</p>
+        </div>
+        <div>
+          <h3>Text</h3>
+          <p>AI assistance was used to draft and edit the plain-language explanations and the case narratives.
+            Every numeric claim displayed in the app is computed from the cached NASA series at run time; the
+            prose is reviewed by the team.</p>
+        </div>
+        <div>
+          <h3>In-app assistant</h3>
+          <p>“Ask Trendoscope” does <strong>not</strong> call a language model in this build. It is a
+            deterministic answer engine that assembles sentences only from the current result object (slope,
+            p-value, tau, mean, missing share) and a fixed glossary, and it declines questions outside the
+            project's domain. The architecture is ready to swap in a grounded LLM behind a server-side proxy,
+            where the API key never reaches the browser.</p>
+        </div>
+        <div>
+          <h3>Design</h3>
+          <p>The interface was designed with AI assistance against the team's own specification documents; all
+            data values, region choices and scientific framing were decided by the team.</p>
+        </div>
+      </div>
+      <p class="disclosure-foot">
+        No AI system generated any of the data. Values come from NASA POWER; the cache date is recorded in
+        <code>data-core.js</code>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ CREDITS ================================ -->
+<section class="section--tight" style="padding-bottom: var(--s9)">
+  <div class="container">
+    <div class="glass-card credits">
+      <div>
+        <p class="eyebrow">Credits</p>
+        <h2 class="section-title" style="font-size:28px">Team Trendoscope</h2>
+        <p class="dim" style="margin-top:8px">NASA Space Apps Challenge Cairo 2026 · challenge: <em>Be An Earth System Trend Detective!</em></p>
+      </div>
+      <div class="credits-links">
+        <a class="btn btn-quiet" href="index.html">Back to home</a>
+        <a class="btn btn-ghost" href="investigate.html">Open a case</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p class="footer-left">
+      <span class="footer-word">Trendoscope</span>
+      Data from NASA Earth science missions · NASA POWER / MERRA-2
+    </p>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="data-method.html">Data &amp; Method</a>
+      <a href="data-method.html#ai-use">AI-use disclosure</a>
+      <a href="data-method.html#sources">Sources</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- Ask Trendoscope: floating button + side panel (available on every page) -->
+<button class="ask-fab" aria-expanded="false" aria-controls="ask-panel" aria-label="Ask Trendoscope">
+  <svg viewBox="0 0 34 34" width="26" height="26" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="15" r="9.4" stroke="#8CC63F" stroke-width="1.7"/><path d="M6.6 12.4c2.4 1.6 5.2 2.4 8.4 2.4s6-.8 8.4-2.4" stroke="#8CC63F" stroke-width="1.4" opacity="0.85"/><path d="M15 5.6c3.2 2.8 4.8 6 4.8 9.4S18.2 21.6 15 24.4c-3.2-2.8-4.8-6-4.8-9.4S11.8 8.4 15 5.6Z" stroke="#8CC63F" stroke-width="1.2" opacity="0.6"/><circle cx="24.4" cy="24.4" r="3.6" fill="#061A33" stroke="#A6D955" stroke-width="1.8"/><line x1="27" y1="27" x2="30.2" y2="30.2" stroke="#A6D955" stroke-width="2"/></svg>
+  <span>Ask</span>
+</button>
+
+<aside class="ask-panel" id="ask-panel" aria-hidden="true" aria-label="Ask Trendoscope">
+  <div class="ask-head">
+    <div class="ask-head-title"><svg viewBox="0 0 34 34" width="26" height="26" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="15" r="9.4" stroke="#8CC63F" stroke-width="1.7"/><path d="M6.6 12.4c2.4 1.6 5.2 2.4 8.4 2.4s6-.8 8.4-2.4" stroke="#8CC63F" stroke-width="1.4" opacity="0.85"/><path d="M15 5.6c3.2 2.8 4.8 6 4.8 9.4S18.2 21.6 15 24.4c-3.2-2.8-4.8-6-4.8-9.4S11.8 8.4 15 5.6Z" stroke="#8CC63F" stroke-width="1.2" opacity="0.6"/><circle cx="24.4" cy="24.4" r="3.6" fill="#061A33" stroke="#A6D955" stroke-width="1.8"/><line x1="27" y1="27" x2="30.2" y2="30.2" stroke="#A6D955" stroke-width="2"/></svg><span>Ask Trendoscope</span></div>
+    <button class="ask-close" type="button" aria-label="Close chat"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+  </div>
+  <div class="ask-context">Ask about the data, a method, or the result you have open.</div>
+  <div class="chat" role="log" aria-live="polite"></div>
+  <div class="ask-suggest">
+    <button class="chip" type="button" data-q="What does this p-value mean?">What does the p-value mean?</button>
+    <button class="chip" type="button" data-q="Why do the two regions differ?">Why do regions differ?</button>
+    <button class="chip" type="button" data-q="Where does the data come from?">Where does the data come from?</button>
+  </div>
+  <form class="ask-form" id="ask-form">
+    <label class="sr-only" for="ask-input">Ask a question</label>
+    <input class="input ask-input" id="ask-input" type="text" placeholder="Ask about the data…" autocomplete="off" />
+    <button class="ask-send" type="submit" aria-label="Send question"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></button>
+  </form>
+</aside>
+
+<div class="toast-wrap" aria-live="polite"></div>
+
+<script src="data-core.js"></script>
+<script src="data-monthly.js"></script>
+<script src="app.js"></script>
+<script src="method.js"></script>
+</body>
+</html>
